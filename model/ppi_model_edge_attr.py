@@ -9,10 +9,7 @@ from torch_geometric.utils import softmax
 
 
 def orthogonal_init(module, gain=1.0):
-    """对 nn.Linear 做正交初始化（避免逐层随机初始化的方差漂移）。
-
-    使用 torch.nn.init.orthogonal_（内部 QR 分解），对任意形状都不会零填充。
-    """
+    
     if isinstance(module, nn.Linear):
         nn.init.orthogonal_(module.weight, gain=gain)
         if module.bias is not None:
@@ -29,16 +26,7 @@ class ResidueEmbedding(nn.Module):
 
 
 class PPIAffinityModelEdgeAttr(nn.Module):
-    """支持 edge_attr 的 PPI 亲和力模型。
-
-    通过 conv_type 在 GINEConv / GATConv / TransformerConv 三种支持边属性的
-    图卷积之间切换，与 MutiChainPPIGBuilder_all_power_optimized.py 产出的
-    Data(x, aa_types, edge_index, edge_attr, y) 直接配套。
-
-    边属性流程：原始 9 维 edge_attr -> edge_encoder(Linear) -> hidden_dim
-    -> 各卷积层以 edge_dim=hidden_dim 消费。
-    """
-
+    
     def __init__(self, cont_feat_dim=3, aa_embed_dim=32, hidden_dim=64,
                  num_layers=3, dropout=0.2, conv_type='gine',
                  pooling='mean_max', heads=4, edge_attr_dim=9):
@@ -53,10 +41,10 @@ class PPIAffinityModelEdgeAttr(nn.Module):
         self.aa_embed = ResidueEmbedding(aa_embed_dim)
         self.input_proj = nn.Linear(cont_feat_dim + aa_embed_dim, hidden_dim)
 
-        # 边属性编码器：把原始 edge_attr(9) 投影到 hidden_dim
+        
         self.edge_encoder = nn.Linear(edge_attr_dim, hidden_dim)
 
-        # 构建卷积层
+       
         self.convs = nn.ModuleList()
         self.bns = nn.ModuleList()
         for _ in range(num_layers):
@@ -78,18 +66,18 @@ class PPIAffinityModelEdgeAttr(nn.Module):
                 )
             self.bns.append(nn.BatchNorm1d(hidden_dim))
 
-        # 注意力门控（图级池化权重）
+       
         self.attention_gate = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.Tanh(),
             nn.Linear(hidden_dim // 2, 1),
         )
 
-        # 图级池化
+        
         self.pooling = pooling
         pool_dim = hidden_dim * (2 if pooling == 'mean_max' else 1)
 
-        # 回归头
+        
         self.regressor = nn.Sequential(
             nn.Linear(pool_dim, hidden_dim // 2),
             nn.ReLU(),
@@ -97,7 +85,7 @@ class PPIAffinityModelEdgeAttr(nn.Module):
             nn.Linear(hidden_dim // 2, 1),
         )
 
-        # 仅对输入投影与边编码器做正交初始化（卷积层用 PyG 默认 glorot）
+       
         orthogonal_init(self.input_proj)
         orthogonal_init(self.edge_encoder)
 
@@ -107,15 +95,15 @@ class PPIAffinityModelEdgeAttr(nn.Module):
         return conv(h, edge_index, edge_attr)
 
     def forward(self, data):
-        # 1. 节点特征拼接与初始投影
+        
         aa_emb = self.aa_embed(data.aa_types)
         h = torch.cat([data.x, aa_emb], dim=1)
         h = self.input_proj(h)
 
-        # 2. 边属性编码（投影到 hidden_dim）
+        
         edge_attr = self.edge_encoder(data.edge_attr)
 
-        # 3. 残差图卷积堆叠（统一包装：conv -> BN -> ReLU -> dropout -> +残差）
+        
         for conv, bn in zip(self.convs, self.bns):
             identity = h
             out = self._conv_forward(conv, h, data.edge_index, edge_attr)
@@ -124,7 +112,7 @@ class PPIAffinityModelEdgeAttr(nn.Module):
             out = F.dropout(out, p=0.2, training=self.training)
             h = out + identity
 
-        # 4. 注意力加权池化
+       
         att_scores = self.attention_gate(h)
         batch = getattr(data, "batch", None)
         if batch is None:
@@ -140,10 +128,10 @@ class PPIAffinityModelEdgeAttr(nn.Module):
         else:
             graph_vec = global_mean_pool(weighted_h, batch)
 
-        # 5. 回归输出
+       
         out = self.regressor(graph_vec)
         return out.squeeze(-1)
 
 
 def build_model(conv_type='gine', **kwargs):
-    """工厂函数：快速构造指定类型的模型。"""
+  
