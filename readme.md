@@ -7,7 +7,9 @@ This study constructs residue graph features for protein–protein complexes and
 
 The generated datasets, consisting of 39-dimensional node features and 9-dimensional edge features, can be downloaded from the DATAs folder. 
 The checkpoints folder contains the trained weights for both the STGPPI model and the PPB-Affinity baseline (trained on our dataset).
+You can download dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22023965).
 
+You can download PPB-Affinity Baseline model trained weight on our dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22024123).
 ## Train STGPPI
 	```
 	python train.py --data_path DATA/all.pt --save_dir ./STGPPI_FOLDER
