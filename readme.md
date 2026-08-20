@@ -9,7 +9,7 @@ The generated datasets, consisting of 39-dimensional node features and 9-dimensi
 The checkpoints folder contains the trained weights for both the STGPPI model and the PPB-Affinity baseline (trained on our dataset).
 You can download dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22023965).
 
-You can download PPB-Affinity Baseline model trained weight on our dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22024123).
+You can download PPB-Affinity Baseline model trained weight on our dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22024132).
 ## Train STGPPI
 	```
 	python train.py --data_path DATA/all.pt --save_dir ./STGPPI_FOLDER
