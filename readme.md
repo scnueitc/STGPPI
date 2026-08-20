@@ -13,12 +13,12 @@ You can download dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.220
 You can download PPB-Affinity Baseline model trained weight on our dataset from [Zenodo](https://zenodo.org/doi/10.5281/zenodo.22024132).
 ## Train STGPPI
 	```
-	python train.py --data_path DATA/all.pt --save_dir ./STGPPI_FOLDER
+	python train.py --data_path DATA/PPB-Affinity_without_mutations.pt --save_dir ./STGPPI_FOLDER
 	
 	```
 ## Inference based on STGPPI
 	```
-	python your_script_name.py --data_path DATA/all.pt --checkpoint ./STGPPI.pth
+	python Inference.py --data_path DATA/PPB-Affinity_without_mutations.pt --checkpoint ./STGPPI.pth
 	
 	```
 
