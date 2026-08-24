@@ -18,7 +18,7 @@ You can download PPB-Affinity Baseline model trained weight on our dataset from 
 	```
 ## Inference based on STGPPI
 	```
-	python Inference.py --data_path Datasets/PPB-Affinity_without_mutations.pt --checkpoint ./STGPPI.pth
+	python inference.py --data_path Datasets/PPB-Affinity_without_mutations.pt --checkpoint ./STGPPI.pth
 	
 	```
 
