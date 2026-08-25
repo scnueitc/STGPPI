@@ -56,7 +56,7 @@ if __name__ == "__main__":
         for fold_idx, (train_idx, val_idx) in enumerate(kfold.split(data_list)):
             init_lr = 1e-3       # Initial learning rate
             optimizer = getopt.get_optimizer(model, lr=1e-3, weight_decay=1e-4)
-            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=30, min_lr=1e-6)
+            scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=15, min_lr=1e-6)
             print(f"\n========== Fold {fold_idx+1}/5 ==========")
             train_data = [data_list[i] for i in train_idx]
             val_data   = [data_list[i] for i in val_idx]
